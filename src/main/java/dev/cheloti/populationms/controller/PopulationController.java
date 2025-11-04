@@ -108,4 +108,68 @@ public class PopulationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @GetMapping("/rate")
+    public ResponseEntity<Response> getPopGrowthRate(@RequestParam int yearOne, @RequestParam int yearTwo){
+        log.info("Retrieving populationGrowthRate btn year {} and {}", yearOne, yearTwo);
+
+        try {
+            var rate = populationService.findPopulationGrowthRate(yearOne, yearTwo);
+            return ResponseEntity.ok().body(
+                    new Response(
+                            "pop growth rate",
+                            HttpStatus.OK,
+                            HttpStatus.OK.value(),
+                            Map.of("population growth rate",rate)
+                    )
+            );
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
+    @GetMapping("/category")
+    public ResponseEntity<Response> getGrowthRateCategory(@RequestParam int yearOne, @RequestParam int yearTwo){
+
+        var category = populationService.findPopulationGrowthCategory(yearOne, yearTwo);
+        return ResponseEntity.ok().body(
+                new Response(
+                        "growth rate category",
+                        HttpStatus.OK,
+                        HttpStatus.OK.value(),
+                        Map.of("population growth rate category",category)
+                )
+        );
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<Response> getPopHistory(@RequestParam("code") int code){
+
+        var history = populationService.findCountyPopHistoryByCode(code);
+
+        return ResponseEntity.ok().body(
+                new Response(
+                        "Pop History",
+                        HttpStatus.OK,
+                        HttpStatus.OK.value(),
+                        Map.of("population history",history)
+                )
+        );
+    }
+
+    @GetMapping("/data")
+    public ResponseEntity<Response> getPopHistoryWithGeom(){
+        return ResponseEntity.ok().body(
+                new Response(
+                        "Pop History",
+                        HttpStatus.OK,
+                        HttpStatus.OK.value(),
+                        Map.of("population history",populationService.findCountiesPopHistory())
+                )
+        );
+    }
+
+
 }
